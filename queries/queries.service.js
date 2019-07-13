@@ -1,4 +1,4 @@
-const db = require("../db");
+const Recipe = require("../db/models/recipe.js").Recipe
 
 async function authenticate({ email, password }) {
   // Find user by email
@@ -19,7 +19,7 @@ async function getRecipes() {
   console.log("Getting all recipes")
   let fields = "title";
   try {
-    let recipes = await db.Recipe.find({}, fields);
+    let recipes = await Recipe.find({}, fields);
     return recipes
   } catch (error) {
     console.log(error);
@@ -32,7 +32,7 @@ async function getRecipeById(id) {
   console.log("Getting recipe by id");
   let fields = "title ingredients instructions";
   try {
-    let recipe = await db.Recipe.findById(id, fields);
+    let recipe = await Recipe.findById(id, fields);
     console.log("Found recipe: " + recipe.title);
     return recipe
   } catch (error) {
@@ -44,7 +44,7 @@ async function getRecipeById(id) {
 async function createRecipe(recipe) {
   console.log("Creating a recipe: " + recipe.title);
   try {
-    let newRecipe = await db.Recipe.create({
+    let newRecipe = await Recipe.create({
       title: recipe.title,
       ingredients: recipe.ingredients,
       instructions: recipe.instructions
@@ -64,7 +64,7 @@ async function updateRecipe(recipe) {
     new: true
   }
   try {
-    let updatedRecipe = await db.Recipe.findByIdAndUpdate(recipe.id, {
+    let updatedRecipe = await Recipe.findByIdAndUpdate(recipe.id, {
       title: recipe.update.title,
       ingredients: recipe.update.ingredients,
       instructions: recipe.update.instructions
@@ -81,7 +81,7 @@ async function updateRecipe(recipe) {
 async function deleteRecipe(id) {
   console.log("Deleting recipe: " + id);
   try {
-    let deletedRecipe = await db.Recipe.findByIdAndRemove(id);
+    let deletedRecipe = await Recipe.findByIdAndRemove(id);
     console.log(deletedRecipe.title + " deleted.");
     return deletedRecipe;
   } catch (err) {
