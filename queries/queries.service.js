@@ -1,4 +1,4 @@
-// TODO: All database related stuff (setting up connection, queries etc) goes here
+const db = require("../models");
 
 async function authenticate({ email, password }) {
   // Find user by email
@@ -16,53 +16,77 @@ async function authenticate({ email, password }) {
 };
 
 async function getRecipes() {
-  // Get all recipes
-  let recipes = [
-    {
-      id: 1,
-      title: "Hello There!"
-    },
-    {
-      id: 2,
-      title: "General Kenobi!"
-    }
-  ]
-  return recipes;
+  console.log("Getting all recipes")
+  let fields = "title";
+  try {
+    let recipes = await db.Recipe.find({}, fields);
+    return recipes
+  } catch (error) {
+    console.log(error);
+    // Throw or return? Calling function has a cathc block
+    throw err;
+  }
 }
 
 async function getRecipeById(id) {
-  // Return recipe matching id
-  let recipe = {
-    id: 3,
-    title: "Just like the simulations!"
+  console.log("Getting recipe by id");
+  let fields = "title ingredients instructions";
+  try {
+    let recipe = await db.Recipe.findById(id, fields);
+    console.log("Found recipe: " + recipe.title);
+    return recipe
+  } catch (error) {
+    console.log(error);
+    throw err;
   }
-  return recipe;
 }
 
-async function createRecipe({ recipe }) {
-  // Add new recipe
-  let createdRecipe = {
-    id: 4,
-    title: "A fine addition to my collection!"
+async function createRecipe(recipe) {
+  console.log("Creating a recipe: " + recipe.title);
+  try {
+    let newRecipe = await db.Recipe.create({
+      title: recipe.title,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions
+    });
+    console.log(recipe.title + " saved.");
+    return newRecipe;
+  } catch (err) {
+    console.log(err);
+    throw err
   }
-  return createdRecipe;
 }
 
 async function updateRecipe(recipe) {
-  // Update recipe
-  let updatedRecipe = {
-    id: 5,
-    title: "Watch those wrist rockets!"
+  console.log("Updating recipe: " + recipe.update.title);
+  // Return the updated recipe
+  let options = {
+    new: true
   }
-  return updatedRecipe;
+  try {
+    let updatedRecipe = await db.Recipe.findByIdAndUpdate(recipe.id, {
+      title: recipe.update.title,
+      ingredients: recipe.update.ingredients,
+      instructions: recipe.update.instructions
+    }, options);
+    console.log(recipe.update.title + " updated.");
+    return updatedRecipe;
+  } catch (err) {
+    console.log(err);
+    throw err
+  }
 }
 
 async function deleteRecipe(id) {
-  let deletedRecipe = {
-    id: 6,
-    title: "It is treason then!"
+  console.log("Deleting recipe: " + id);
+  try {
+    let deletedRecipe = await db.Recipe.findByIdAndRemove(id);
+    console.log(deletedRecipe.title + " deleted.");
+    return deletedRecipe;
+  } catch (err) {
+    console.log(err);
+    throw err
   }
-  return deletedRecipe;
 }
 
 module.exports = {

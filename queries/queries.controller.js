@@ -7,10 +7,10 @@ const baseAPIUrl = "/api/recipes"
 router.post("/api/login", authenticate); // Public route
 
 router.get(baseAPIUrl, getRecipes) // All authenticated users
-router.get(baseAPIUrl + "/:gid", getRecipeById)
+router.get(baseAPIUrl + "/:id", getRecipeById)
 router.post(baseAPIUrl, createRecipe) // Admin only
-router.put(baseAPIUrl + "/:gid", updateRecipe)
-router.delete(baseAPIUrl + "/:gid", deleteRecipe)
+router.put(baseAPIUrl + "/:id", updateRecipe)
+router.delete(baseAPIUrl + "/:id", deleteRecipe)
 
 module.exports = router;
 
@@ -48,7 +48,7 @@ function createRecipe(req, res, next) {
 }
 
 function updateRecipe(req, res, next) {
-  queryService.updateRecipe(req.body)
+  queryService.updateRecipe({id: req.params.id, update: req.body})
     .then(queries => res.json(queries))
     .catch(err => next(err));
 }
