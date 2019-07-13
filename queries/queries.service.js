@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../db");
 
 async function authenticate({ email, password }) {
   // Find user by email
@@ -69,6 +69,7 @@ async function updateRecipe(recipe) {
       ingredients: recipe.update.ingredients,
       instructions: recipe.update.instructions
     }, options);
+    //TODO:  If recipe not found, returns null, not an error, do something about this. Check etc.
     console.log(recipe.update.title + " updated.");
     return updatedRecipe;
   } catch (err) {
