@@ -52,7 +52,6 @@ async function createRecipe(recipe) {
     console.log(recipe.title + " saved.");
     return newRecipe;
   } catch (err) {
-    console.log(err);
     throw err
   }
 }
