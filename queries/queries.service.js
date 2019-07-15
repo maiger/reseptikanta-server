@@ -21,8 +21,7 @@ async function getRecipes() {
   try {
     let recipes = await Recipe.find({}, fields);
     return recipes
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
     // Throw or return? Calling function has a cathc block
     throw err;
   }
@@ -33,10 +32,11 @@ async function getRecipeById(id) {
   let fields = "title ingredients instructions";
   try {
     let recipe = await Recipe.findById(id, fields);
-    console.log("Found recipe: " + recipe.title);
+    if(recipe) {
+      console.log("Found recipe: " + recipe.title);
+    }
     return recipe
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
     throw err;
   }
 }
@@ -49,10 +49,11 @@ async function createRecipe(recipe) {
       ingredients: recipe.ingredients,
       instructions: recipe.instructions
     });
-    console.log(recipe.title + " saved.");
+    if(newRecipe) {
+      console.log(newRecipe.title + " saved.");
+    }
     return newRecipe;
   } catch (err) {
-    console.log(err);
     throw err
   }
 }
