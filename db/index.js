@@ -9,9 +9,9 @@ function connect() {
     if (process.env.NODE_ENV === "test") {
       const Mockgoose = require("mockgoose").Mockgoose
       const mockgoose = new Mockgoose(mongoose)
-
       mockgoose.prepareStorage()
         .then(() => {
+          console.log("Connecting to mockgoose")
           mongoose.connect(DB_URL, {
             useNewUrlParser: true,
             keepAlive: true,

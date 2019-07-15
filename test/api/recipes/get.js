@@ -31,6 +31,7 @@ describe("GET /recipes", () => {
 
   let id = "";
   it("OK: Getting recipes has one recipe", (done) => {
+    // Create recipe
     request(app).post("/api/recipes")
       .send({
         title: "Lorem Ipsum!",
@@ -38,6 +39,7 @@ describe("GET /recipes", () => {
         instructions: "Consectetur adipiscing elit!"
       })
       .then((res) => {
+        // Get all recipes
         request(app).get("/api/recipes")
           .then((res) => {
             const body = res.body;

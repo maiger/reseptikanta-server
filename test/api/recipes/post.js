@@ -20,9 +20,10 @@ describe("POST /recipes", () => {
   })
 
   it("OK: Creating a new recipe works", (done) => {
+    // Create recipe
     request(app).post("/api/recipes")
       .send({
-        title: "Lorem Ipsum!",
+        title: "A brand new recipe!",
         ingredients: "Dolor sit amet!",
         instructions: "Consectetur adipiscing elit!"
       })
@@ -33,7 +34,7 @@ describe("POST /recipes", () => {
         expect(body).to.contain.property("ingredients")
         expect(body).to.contain.property("instructions")
 
-        expect(body.title).to.equal("Lorem Ipsum!")
+        expect(body.title).to.equal("A brand new recipe!")
         expect(body.ingredients).to.equal("Dolor sit amet!")
         expect(body.instructions).to.equal("Consectetur adipiscing elit!")
         done()
