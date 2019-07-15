@@ -154,6 +154,25 @@ Run tests with:
 npm run test
 ```
 
+***/api/recipes***  
+
+GET:
+- OK: Getting recipes has no recipes
+- OK: Getting recipes has one recipe
+- OK: Gettin recipe by ID
+- FAIL: Getting recipe by incorrect ID, no recipe received
+- FAIL: Getting recipe by incorrect type of ID, no recipe received
+
+POST:
+- OK: Creating a new recipe works
+- FAIL: Recipe requires a title
+
+PUT:
+- OK: Updating a recipe works
+
+DELETE:
+- OK: Deleting a recipe works
+
 Dependencies
 ---
 
@@ -167,6 +186,7 @@ Body Parser
 cors  
 
 ***Database***  
+MongoDB 3.6  
 Mongoose
 
 ***Tests***  
