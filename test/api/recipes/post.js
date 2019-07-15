@@ -23,8 +23,8 @@ describe("POST /recipes", () => {
     request(app).post("/api/recipes")
       .send({
         title: "Lorem Ipsum!",
-        ingredients: "Dolores sit amet!",
-        instructions: "High noon!"
+        ingredients: "Dolor sit amet!",
+        instructions: "Consectetur adipiscing elit!"
       })
       .then((res) => {
         const body = res.body;
@@ -32,6 +32,10 @@ describe("POST /recipes", () => {
         expect(body).to.contain.property("title")
         expect(body).to.contain.property("ingredients")
         expect(body).to.contain.property("instructions")
+
+        expect(body.title).to.equal("Lorem Ipsum!")
+        expect(body.ingredients).to.equal("Dolor sit amet!")
+        expect(body.instructions).to.equal("Consectetur adipiscing elit!")
         done()
       })
       .catch((err) => done(err))
@@ -40,8 +44,8 @@ describe("POST /recipes", () => {
   it("FAIL: Recipe requires a title", (done) => {
     request(app).post("/api/recipes")
       .send({
-        ingredients: "Dolores sit amet!",
-        instructions: "High noon!"
+        ingredients: "Dolor sit amet!",
+        instructions: "Consectetur adipiscing elit!"
       })
       .then((res) => {
         const body = res.body;

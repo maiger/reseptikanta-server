@@ -1,7 +1,7 @@
 
 const mongoose = require("mongoose");
 const DB_URL = "mongodb://localhost/reseptikanta"
-mongoose.set("debug", true);
+mongoose.set("debug", false);
 mongoose.Promise = Promise;
 
 function connect() {
