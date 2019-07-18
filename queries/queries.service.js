@@ -29,7 +29,7 @@ async function getRecipes() {
 
 async function getRecipeById(id) {
   console.log("Getting recipe by id");
-  let fields = "title ingredients instructions";
+  let fields = "title ingredients instructions difficulty preptime tags";
   try {
     let recipe = await Recipe.findById(id, fields);
     if(recipe) {
@@ -47,7 +47,10 @@ async function createRecipe(recipe) {
     let newRecipe = await Recipe.create({
       title: recipe.title,
       ingredients: recipe.ingredients,
-      instructions: recipe.instructions
+      instructions: recipe.instructions,
+      difficulty: recipe.difficulty,
+      preptime: recipe.preptime,
+      tags: recipe.tags
     });
     if(newRecipe) {
       console.log(newRecipe.title + " saved.");
@@ -68,7 +71,10 @@ async function updateRecipe(recipe) {
     let updatedRecipe = await Recipe.findByIdAndUpdate(recipe.id, {
       title: recipe.update.title,
       ingredients: recipe.update.ingredients,
-      instructions: recipe.update.instructions
+      instructions: recipe.update.instructions,
+      difficulty: recipe.difficulty,
+      preptime: recipe.preptime,
+      tags: recipe.tags
     }, options);
     //TODO:  If recipe not found, returns null, not an error, do something about this. Check etc.
     console.log(recipe.update.title + " updated.");

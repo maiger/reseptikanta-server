@@ -13,6 +13,18 @@ const recipeSchema = new mongoose.Schema(
     instructions: {
       type: String,
       required: false
+    },
+    difficulty: {
+      type: Number,
+      required: false
+    },
+    preptime: {
+      type: Number,
+      required: false
+    },
+    tags: {
+      type: [String],
+      required: false
     }
   }
 )
