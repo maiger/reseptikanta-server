@@ -28,6 +28,7 @@ describe("POST /recipes", () => {
         instructions: "Consectetur adipiscing elit!",
         difficulty: 1,
         preptime: 10,
+        servings: 3,
         tags: ["salaatti", "kasvis"]
 
       })
@@ -39,12 +40,14 @@ describe("POST /recipes", () => {
         expect(body).to.contain.property("instructions")
         expect(body).to.contain.property("difficulty")
         expect(body).to.contain.property("preptime")
+        expect(body).to.contain.property("servings")
         expect(body).to.contain.property("tags")
 
         expect(body.title).to.equal("A brand new recipe!")
         expect(body.ingredients).to.equal("Dolor sit amet!")
         expect(body.instructions).to.equal("Consectetur adipiscing elit!")
         expect(body.difficulty).to.equal(1)
+        expect(body.servings).to.equal(3)
         expect(body.preptime).to.equal(10)
         // Different equal check when validating arrays
         expect(body.tags).to.eql(["salaatti", "kasvis"])

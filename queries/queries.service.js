@@ -17,7 +17,7 @@ async function authenticate({ email, password }) {
 
 async function getRecipes() {
   console.log("Getting all recipes")
-  let fields = "title";
+  let fields = "title tags preptime difficulty servings";
   try {
     let recipes = await Recipe.find({}, fields);
     return recipes
@@ -29,7 +29,7 @@ async function getRecipes() {
 
 async function getRecipeById(id) {
   console.log("Getting recipe by id");
-  let fields = "title ingredients instructions difficulty preptime tags";
+  let fields = "title ingredients instructions difficulty preptime servings tags";
   try {
     let recipe = await Recipe.findById(id, fields);
     if(recipe) {
@@ -50,6 +50,7 @@ async function createRecipe(recipe) {
       instructions: recipe.instructions,
       difficulty: recipe.difficulty,
       preptime: recipe.preptime,
+      servings: recipe.servings,
       tags: recipe.tags
     });
     if(newRecipe) {
@@ -74,6 +75,7 @@ async function updateRecipe(recipe) {
       instructions: recipe.update.instructions,
       difficulty: recipe.difficulty,
       preptime: recipe.preptime,
+      servings: recipe.servings,
       tags: recipe.tags
     }, options);
     //TODO:  If recipe not found, returns null, not an error, do something about this. Check etc.
