@@ -19,7 +19,7 @@ describe("GET /recipes", () => {
       .catch((err) => done(err))
   })
 
-  it("OK: Gettin recipes has no recipes", (done) => {
+  it("OK: Getting recipes has no recipes", (done) => {
     request(app).get("/api/recipes")
       .then((res) => {
         const body = res.body;
@@ -36,7 +36,10 @@ describe("GET /recipes", () => {
       .send({
         title: "Lorem Ipsum!",
         ingredients: "Dolor sit amet!",
-        instructions: "Consectetur adipiscing elit!"
+        instructions: "Consectetur adipiscing elit!",
+        difficulty: 1,
+        preptime: 10,
+        tags: ["salaatti", "kasvis"]
       })
       .then((res) => {
         // Get all recipes
@@ -52,7 +55,7 @@ describe("GET /recipes", () => {
   })
 
   // Use recipe id from previous test
-  it("OK: Gettin recipe by ID", (done) => {
+  it("OK: Getting recipe by ID", (done) => {
     request(app).get("/api/recipes/" + id)
       .then((res) => {
         const body = res.body;
@@ -60,11 +63,18 @@ describe("GET /recipes", () => {
         expect(body).to.contain.property("title")
         expect(body).to.contain.property("ingredients")
         expect(body).to.contain.property("instructions")
+        expect(body).to.contain.property("difficulty")
+        expect(body).to.contain.property("preptime")
+        expect(body).to.contain.property("tags")
 
         expect(body._id).to.equal(id)
         expect(body.title).to.equal("Lorem Ipsum!")
         expect(body.ingredients).to.equal("Dolor sit amet!")
         expect(body.instructions).to.equal("Consectetur adipiscing elit!")
+        expect(body.difficulty).to.equal(1)
+        expect(body.preptime).to.equal(10)
+        // Different equal check when validating arrays
+        expect(body.tags).to.eql(["salaatti", "kasvis"])
         done();
       })
       .catch((err) => done(err))

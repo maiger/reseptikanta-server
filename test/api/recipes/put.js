@@ -20,7 +20,7 @@ describe("PUT /recipes", () => {
   })
 
   let id = "";
-  it("OK: Updating a recipe works", (done) => {
+  it("OK: Updating recipe title works", (done) => {
     // Create recipe
     request(app).post("/api/recipes")
       .send({
