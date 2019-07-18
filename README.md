@@ -37,12 +37,26 @@ Example response:
 ```json
 [
     {
-        "_id": "5d29d9cde92f723a84348f7e",
-        "title": "Hello There!"
+        "tags": [
+            "liha",
+            "pata"
+        ],
+        "_id": "5d306d90986bbb1b1c656ce2",
+        "title": "Lihapata!",
+        "difficulty": 3,
+        "preptime": 120,
+        "servings": 6
     },
     {
-        "_id": "5d2aedde1787b735d4222bef",
-        "title": "Lorem Ipsum!"
+        "tags": [
+            "kana",
+            "keitto"
+        ],
+        "_id": "5d306d96986bbb1b1c656ce3",
+        "title": "Kanakeitto!",
+        "difficulty": 2,
+        "preptime": 45,
+        "servings": 4
     }
 ]
 ```
@@ -54,12 +68,17 @@ Provide a valid recipe id as URL parameter.
 Example response:
 
 ```json
-{
-"_id": "5d29d9cde92f723a84348f7e",
- "title": "Lorem Ipsum",
- "ingredients": "Dolor sit amet",
- "instructions": "Consectetur adipiscing elit"
-}
+    "tags": [
+        "liha",
+        "pata"
+    ],
+    "_id": "5d306d90986bbb1b1c656ce2",
+    "title": "Lihapata!",
+    "ingredients": "Lihaa!",
+    "instructions": "Lihaa padassa!",
+    "difficulty": 3,
+    "preptime": 120,
+    "servings": 6
 ```
 
 **POST /api/recipes**  
@@ -71,25 +90,40 @@ Content-Type: application/json
 | title | String | null | True | Title of recipe |
 | ingredients | String | null | False | Full ingredients list |
 | instructions | String | null | False | Full instructions |
+| difficulty | Number | null | False | Difficulty as range from 1 to 5 |
+| preptime | Number | null | False | Recipe preparation time in minutes |
+| servings | Number | null | False | Number of servings from this recipe |
+| tags | [String] | null | False | Recipe tags as a string array |
 
 
 Example POST:
 
 ```json
 {
- "title": "Lorem Ipsum",
- "ingredients": "Dolor sit amet",
- "instructions": "Consectetur adipiscing elit"
+ "title": "Fetasalaatti!",
+ "ingredients": "Fetaa ja salaattia!",
+ "instructions": "This is a test!",
+ "difficulty": 1,
+ "preptime": 10,
+ "servings": 3,
+ "tags": ["salaatti", "kasvis"]
 }
 ```
 
 Response is the newly created recipe.
 ```
 {
-    "_id": "5d2c8a747c1da73a0c62951e",
-    "title": "Lorem Ipsum",
-    "ingredients": "Dolores sit amet!",
-    "instructions": "Consectetur adipiscing elit",
+    "tags": [
+        "salaatti",
+        "kasvis"
+    ],
+    "_id": "5d306da5986bbb1b1c656ce5",
+    "title": "Fetasalaatti!",
+    "ingredients": "Fetaa ja salaattia!",
+    "instructions": "This is a test!",
+    "difficulty": 1,
+    "preptime": 10,
+    "servings": 3,
     "__v": 0
 }
 ```
@@ -107,23 +141,42 @@ Content-Type: application/json
 | title | String | null | True | Title of recipe |
 | ingredients | String | null | False | Full ingredients list |
 | instructions | String | null | False | Full instructions |
+| difficulty | Number | null | False | Difficulty as range from 1 to 5 |
+| preptime | Number | null | False | Recipe preparation time in minutes |
+| servings | Number | null | False | Number of servings from this recipe |
+| tags | [String] | null | False | Recipe tags as a string array |
 
 Example POST:
 
 ```json
 {
- "title": "New title",
- "ingredients": "Dolor sit amet"
+    "tags": [
+        "liha",
+        "pata"
+    ],
+    "title": "Lihapata Remix!",
+    "ingredients": "Lihaa!",
+    "instructions": "Lihaa padassa!",
+    "difficulty": 3,
+    "preptime": 120,
+    "servings": 6
 }
 ```
 
 Response is the updated recipe.
 ```
 {
-    "_id": "5d2aedde1787b735d4222bef",
-    "title": "New title",
-    "ingredients": "Dolor sit amet",
-    "instructions": null, // Field not given, got overridden as null
+    "tags": [
+        "liha",
+        "pata"
+    ],
+    "_id": "5d306d90986bbb1b1c656ce2",
+    "title": "Lihapata Remix!",
+    "ingredients": "Lihaa!",
+    "instructions": "Lihaa padassa!",
+    "difficulty": 3,
+    "preptime": 120,
+    "servings": 6,
     "__v": 0
 }
 ```
@@ -135,10 +188,16 @@ Provide a valid recipe id as URL parameter.
 Response is the deleted recipe.
 ```
 {
-    "_id": "5d2c8a747c1da73a0c62951e",
-    "title": "Lorem Ipsum",
-    "ingredients": "Dolores sit amet!",
-    "instructions": "Consectetur adipiscing elit",
+    "tags": [
+        "salaatti",
+        "kasvis"
+    ],
+    "_id": "5d3063b22b71f03754f55d2d",
+    "title": "Fetasalaatti!",
+    "ingredients": "Fetaa ja salaattia!",
+    "instructions": "This is a test!",
+    "difficulty": 1,
+    "preptime": 10,
     "__v": 0
 }
 ```
