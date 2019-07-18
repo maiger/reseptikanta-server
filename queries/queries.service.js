@@ -73,10 +73,10 @@ async function updateRecipe(recipe) {
       title: recipe.update.title,
       ingredients: recipe.update.ingredients,
       instructions: recipe.update.instructions,
-      difficulty: recipe.difficulty,
-      preptime: recipe.preptime,
-      servings: recipe.servings,
-      tags: recipe.tags
+      difficulty: recipe.update.difficulty,
+      preptime: recipe.update.preptime,
+      servings: recipe.update.servings,
+      tags: recipe.update.tags
     }, options);
     //TODO:  If recipe not found, returns null, not an error, do something about this. Check etc.
     console.log(recipe.update.title + " updated.");
