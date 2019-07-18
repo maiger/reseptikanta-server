@@ -24,9 +24,13 @@ describe("PUT /recipes", () => {
     // Create recipe
     request(app).post("/api/recipes")
       .send({
-        title: "A recipe for updating!",
+        title: "A brand new recipe!",
         ingredients: "Dolor sit amet!",
-        instructions: "Consectetur adipiscing elit!"
+        instructions: "Consectetur adipiscing elit!",
+        difficulty: 1,
+        preptime: 10,
+        servings: 3,
+        tags: ["salaatti", "kasvis"]
       })
       .then((res) => {
         // Update newly created recipe
@@ -35,12 +39,23 @@ describe("PUT /recipes", () => {
         request(app).put("/api/recipes/" + id)
           .send({
             title: "Updated title!",
-            ingredients: "Dolor sit amet!",
-            instructions: "Consectetur adipiscing elit!"
+            ingredients: "Updated ingredients!",
+            instructions: "Updated instructions!",
+            difficulty: 2,
+            preptime: 30,
+            servings: 5,
+            tags: ["updated", "tags"]
           })
           .then((res) => {
             const body = res.body;
             expect(body.title).to.equal("Updated title!")
+            expect(body.ingredients).to.equal("Updated ingredients!")
+            expect(body.instructions).to.equal("Updated instructions!")
+            expect(body.difficulty).to.equal(2)
+            expect(body.preptime).to.equal(30)
+            expect(body.servings).to.equal(5)
+            // Different equal check when validating arrays
+            expect(body.tags).to.eql(["updated", "tags"])
             done()
           })
       })
