@@ -1,19 +1,60 @@
 const Recipe = require("../db/models/recipe.js").Recipe
+const User = require("../db/models/user.js").User
+// Add jwt
+// Add bcrypt
 
-async function authenticate({ email, password }) {
-  // Find user by email
-  // Check if correct password
-  // Create JWT
-  // Return user and token
-  let user = {
-    id: 1,
-    name: "Darth Plagueis the Wise",
-    role: "admin"
+async function authenticate({ username, password }) {
+  const user = await User.findOne({ username });
+  if (user && bcrypt.compareSync(password, user.hash)) {
+    const { hash, ...userWithoutHash } = user.toObject();
+    const token = jwt.sign({ sub: user.id }, config.secret);
+    return {
+      ...userWithoutHash,
+      token
+    };
   }
-  let token = "I thought not. It's not a story the Jedi would tell you. It's a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful... the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. It's ironic he could save others from death, but not himself."
-
-  return { ...user, token }
 };
+
+async function signup(newUser) {
+  // validate
+  if (await User.findOne({ username: newUser.username })) {
+    throw 'Username "' + newUser.username + '" is already taken';
+  }
+
+  const user = new User(newUser);
+
+  // hash password
+  if (newUser.password) {
+    user.hash = bcrypt.hashSync(newUser.password, 10);
+  }
+
+  // save user
+  await user.save();
+}
+
+async function updateUser(id, updatedUser) {
+  const user = await User.findById(id);
+
+  // validate
+  if (!user) throw 'User not found';
+  if (user.username !== updatedUser.username && await User.findOne({ username: updatedUser.username })) {
+    throw 'Username "' + updatedUser.username + '" is already taken';
+  }
+
+  // hash password if it was entered
+  if (updatedUser.password) {
+    updatedUser.hash = bcrypt.hashSync(updatedUser.password, 10);
+  }
+
+  // copy updatedUser properties to user
+  Object.assign(user, updatedUser);
+
+  await user.save();
+}
+
+async function deleteUser(id) {
+  await User.findByIdAndRemove(id);
+}
 
 async function getRecipes() {
   console.log("Getting all recipes")
@@ -32,7 +73,7 @@ async function getRecipeById(id) {
   let fields = "title ingredients instructions difficulty preptime servings tags";
   try {
     let recipe = await Recipe.findById(id, fields);
-    if(recipe) {
+    if (recipe) {
       console.log("Found recipe: " + recipe.title);
     }
     return recipe
@@ -53,7 +94,7 @@ async function createRecipe(recipe) {
       servings: recipe.servings,
       tags: recipe.tags
     });
-    if(newRecipe) {
+    if (newRecipe) {
       console.log(newRecipe.title + " saved.");
     }
     return newRecipe;
@@ -101,6 +142,9 @@ async function deleteRecipe(id) {
 
 module.exports = {
   authenticate,
+  signup,
+  updateUser,
+  deleteUser,
   getRecipes,
   getRecipeById,
   createRecipe,

@@ -5,6 +5,10 @@ const queryService = require("./queries.service")
 const baseAPIUrl = "/api/recipes"
 
 router.post("/api/login", authenticate); // Public route
+router.post("/api/signup", signup);
+
+router.put("api/user"  + "/:id", updateUser);
+router.delete("api/user" + "/:id", deleteUser);
 
 router.get(baseAPIUrl, getRecipes) // All authenticated users
 router.get(baseAPIUrl + "/:id", getRecipeById)
@@ -25,6 +29,25 @@ function authenticate(req, res, next) {
         res.status(400).json({message: "Username or password is incorrect"})
       }
     })
+    .catch(err => next(err));
+}
+
+function signup(req, res, next) {
+  queryService.signup(req.body)
+  .then(queries => {
+    res.json(queries)})
+  .catch(err => next(err));
+}
+
+function updateUser(req, res, next) {
+  queryService.updateUser(req.params.id, req.body)
+    .then(queries => res.json(queries))
+    .catch(err => next(err));
+}
+
+function deleteUser(req, res, next) {
+  queryService.deleteUser(req.params.id)
+    .then(queries => res.json(queries))
     .catch(err => next(err));
 }
 
