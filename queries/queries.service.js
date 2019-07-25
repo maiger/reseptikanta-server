@@ -1,6 +1,9 @@
 const Recipe = require("../db/models/recipe.js").Recipe
 const User = require("../db/models/user.js").User
-// Add jwt
+
+// Secret string for JWT, remember to add this file as it is in .gitignore
+const config = require('../config.json');
+const jwt = require('jsonwebtoken');
 const bcrypt = require("bcryptjs")
 
 async function signup(newUser) {
@@ -25,7 +28,7 @@ async function authenticate({ username, password }) {
   const user = await User.findOne({ username });
   if (user && bcrypt.compareSync(password, user.hash)) {
     const { hash, ...userWithoutHash } = user.toObject();
-    const token = jwt.sign({ sub: user.id }, config.secret);
+    const token = jwt.sign({ sub: user.id, role: user.role }, config.secret);
     return {
       ...userWithoutHash,
       token

@@ -32,7 +32,7 @@ function authenticate(req, res, next) {
   queryService.authenticate(req.body)
     .then(user => {
       if (user) {
-        console.log("Loggin in user: " + user.name);
+        console.log("Loggin in user: " + user.username);
         res.json(user);
       } else {
         console.log("Username or password is incorrect")
