@@ -19,18 +19,19 @@ describe("GET /recipes", () => {
       .catch((err) => done(err))
   })
 
-  it("OK: Getting recipes has no recipes", (done) => {
+  it("OK: Getting recipes has one recipes", (done) => {
+    // There is already one recipe created by test 0_post
     request(app).get("/api/recipes")
       .then((res) => {
         const body = res.body;
-        expect(body.length).to.equal(0)
+        expect(body.length).to.equal(1)
         done()
       })
       .catch((err) => done(err))
   })
 
   let id = "";
-  it("OK: Getting recipes has one recipe", (done) => {
+  it("OK: Getting recipes has two recipes", (done) => {
     // Create recipe
     request(app).post("/api/recipes")
       .send({
@@ -43,12 +44,13 @@ describe("GET /recipes", () => {
         tags: ["salaatti", "kasvis"]
       })
       .then((res) => {
+        // Creating a recipe returns the newly created recipe
+        id = res.body._id
         // Get all recipes
         request(app).get("/api/recipes")
           .then((res) => {
             const body = res.body;
-            id = body[0]._id
-            expect(body.length).to.equal(1)
+            expect(body.length).to.equal(2)
             done()
           })
       })

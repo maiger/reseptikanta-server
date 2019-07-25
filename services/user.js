@@ -8,7 +8,7 @@ const bcrypt = require("bcryptjs")
 async function signup(newUser) {
   // validate
   if (await User.findOne({ username: newUser.username })) {
-    throw 'Username "' + newUser.username + '" is already taken';
+    throw { name: "InvalidUsername", message: 'Username "' + newUser.username + '" is already taken' };
   }
 
   const user = new User(newUser);
@@ -16,6 +16,8 @@ async function signup(newUser) {
   // hash password
   if (newUser.password) {
     user.hash = bcrypt.hashSync(newUser.password, 10);
+  } else {
+    throw { name: "InvalidPassword", message: 'Password required' };
   }
 
   // save user
@@ -86,7 +88,7 @@ async function deleteUser(id) {
   try {
     let deletedUser = await User.findByIdAndRemove(id);
     return deletedUser
-  } catch(err) {
+  } catch (err) {
     throw err;
   }
 }
