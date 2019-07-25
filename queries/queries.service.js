@@ -1,19 +1,7 @@
 const Recipe = require("../db/models/recipe.js").Recipe
 const User = require("../db/models/user.js").User
 // Add jwt
-// Add bcrypt
-
-async function authenticate({ username, password }) {
-  const user = await User.findOne({ username });
-  if (user && bcrypt.compareSync(password, user.hash)) {
-    const { hash, ...userWithoutHash } = user.toObject();
-    const token = jwt.sign({ sub: user.id }, config.secret);
-    return {
-      ...userWithoutHash,
-      token
-    };
-  }
-};
+const bcrypt = require("bcryptjs")
 
 async function signup(newUser) {
   // validate
@@ -29,7 +17,46 @@ async function signup(newUser) {
   }
 
   // save user
-  await user.save();
+  let createdUser = await user.save();
+  return createdUser;
+}
+
+async function authenticate({ username, password }) {
+  const user = await User.findOne({ username });
+  if (user && bcrypt.compareSync(password, user.hash)) {
+    const { hash, ...userWithoutHash } = user.toObject();
+    const token = jwt.sign({ sub: user.id }, config.secret);
+    return {
+      ...userWithoutHash,
+      token
+    };
+  }
+};
+
+async function getUsers() {
+  console.log("Getting all users")
+  let fields = "username role createdDate";
+  try {
+    let users = await User.find({}, fields);
+    return users
+  } catch (err) {
+    // Throw or return? Calling function has a cathc block
+    throw err;
+  }
+}
+
+async function getUserById(id) {
+  console.log("Getting user by id");
+  let fields = "username role createdDate";
+  try {
+    let user = await User.findById(id, fields);
+    if (user) {
+      console.log("Found user: " + user.username);
+    }
+    return user
+  } catch (err) {
+    throw err;
+  }
 }
 
 async function updateUser(id, updatedUser) {
@@ -49,11 +76,17 @@ async function updateUser(id, updatedUser) {
   // copy updatedUser properties to user
   Object.assign(user, updatedUser);
 
-  await user.save();
+  let user = await user.save();
+  return user;
 }
 
 async function deleteUser(id) {
-  await User.findByIdAndRemove(id);
+  try {
+    let deletedUser = await User.findByIdAndRemove(id);
+    return deletedUser
+  } catch(err) {
+    throw err;
+  }
 }
 
 async function getRecipes() {
@@ -141,8 +174,10 @@ async function deleteRecipe(id) {
 }
 
 module.exports = {
-  authenticate,
   signup,
+  authenticate,
+  getUsers,
+  getUserById,
   updateUser,
   deleteUser,
   getRecipes,

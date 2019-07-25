@@ -7,8 +7,10 @@ const baseAPIUrl = "/api/recipes"
 router.post("/api/login", authenticate); // Public route
 router.post("/api/signup", signup);
 
-router.put("api/user"  + "/:id", updateUser);
-router.delete("api/user" + "/:id", deleteUser);
+router.get("/api/user", getUsers)
+router.get("/api/user" + "/:id", getUserById)
+router.put("/api/user" + "/:id", updateUser);
+router.delete("/api/user" + "/:id", deleteUser);
 
 router.get(baseAPIUrl, getRecipes) // All authenticated users
 router.get(baseAPIUrl + "/:id", getRecipeById)
@@ -18,25 +20,40 @@ router.delete(baseAPIUrl + "/:id", deleteRecipe)
 
 module.exports = router;
 
+function signup(req, res, next) {
+  queryService.signup(req.body)
+    .then(user => {
+      res.json(user)
+    })
+    .catch(err => next(err));
+}
+
 function authenticate(req, res, next) {
   queryService.authenticate(req.body)
     .then(user => {
-      if(user) {
+      if (user) {
         console.log("Loggin in user: " + user.name);
         res.json(user);
       } else {
         console.log("Username or password is incorrect")
-        res.status(400).json({message: "Username or password is incorrect"})
+        res.status(400).json({ message: "Username or password is incorrect" })
       }
     })
     .catch(err => next(err));
 }
 
-function signup(req, res, next) {
-  queryService.signup(req.body)
-  .then(queries => {
-    res.json(queries)})
-  .catch(err => next(err));
+function getUsers(req, res, next) {
+  queryService.getUsers()
+    .then(users => {
+      res.json(users)
+    })
+    .catch(err => next(err));
+}
+
+function getUserById(req, res, next) {
+  queryService.getUserById(req.params.id)
+    .then(user => res.json(user))
+    .catch(err => next(err));
 }
 
 function updateUser(req, res, next) {
@@ -54,7 +71,8 @@ function deleteUser(req, res, next) {
 function getRecipes(req, res, next) {
   queryService.getRecipes()
     .then(queries => {
-      res.json(queries)})
+      res.json(queries)
+    })
     .catch(err => next(err));
 }
 
@@ -71,7 +89,7 @@ function createRecipe(req, res, next) {
 }
 
 function updateRecipe(req, res, next) {
-  queryService.updateRecipe({id: req.params.id, update: req.body})
+  queryService.updateRecipe({ id: req.params.id, update: req.body })
     .then(queries => res.json(queries))
     .catch(err => next(err));
 }
