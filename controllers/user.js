@@ -38,7 +38,7 @@ function getUserById(req, res, next) {
 
 function updateUser(req, res, next) {
   queryService.updateUser(req.params.id, req.body)
-    .then(queries => res.json(queries))
+    .then(user => res.json(user))
     .catch(err => next(err));
 }
 

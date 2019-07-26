@@ -80,8 +80,8 @@ async function updateUser(id, updatedUser) {
   // copy updatedUser properties to user
   Object.assign(user, updatedUser);
 
-  let user = await user.save();
-  return user;
+  let u = await user.save();
+  return u;
 }
 
 async function deleteUser(id) {
