@@ -7,9 +7,34 @@ const app = require("../../../app.js")
 const conn = require("../../../db/index.js")
 
 describe("GET /recipes", () => {
+
+  // Create user and get token
+  var token = null
   before((done) => {
     conn.connect()
-      .then(() => done())
+      .then(() => {
+        request(app).post("/api/user")
+          .send({
+            username: "RecipeGetTest",
+            password: "password",
+            role: "user"
+          })
+          .then((res) => {
+            request(app).post("/api/user/login")
+              .send({
+                username: "RecipeGetTest",
+                password: "password"
+              })
+              .then((res) => {
+                token = res.body.token
+                console.log("Setting user token: ")
+                console.log(token)
+                done()
+              })
+              .catch((err) => done(err))
+          })
+          .catch((err) => done(err))
+      })
       .catch((err) => done(err))
   })
 
@@ -34,6 +59,7 @@ describe("GET /recipes", () => {
   it("OK: Getting recipes has two recipes", (done) => {
     // Create recipe
     request(app).post("/api/recipes")
+      .set('Authorization', 'Bearer ' + token)
       .send({
         title: "Lorem Ipsum!",
         ingredients: "Dolor sit amet!",

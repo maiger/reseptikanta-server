@@ -7,9 +7,33 @@ const app = require("../../../app.js")
 const conn = require("../../../db/index.js")
 
 describe("PUT /recipes", () => {
+  // Create user and get token
+  var token = null
   before((done) => {
     conn.connect()
-      .then(() => done())
+      .then(() => {
+        request(app).post("/api/user")
+          .send({
+            username: "RecipePutTest",
+            password: "password",
+            role: "user"
+          })
+          .then((res) => {
+            request(app).post("/api/user/login")
+              .send({
+                username: "RecipePutTest",
+                password: "password"
+              })
+              .then((res) => {
+                token = res.body.token
+                console.log("Setting user token: ")
+                console.log(token)
+                done()
+              })
+              .catch((err) => done(err))
+          })
+          .catch((err) => done(err))
+      })
       .catch((err) => done(err))
   })
 
@@ -23,6 +47,7 @@ describe("PUT /recipes", () => {
   it("OK: Updating recipe title works", (done) => {
     // Create recipe
     request(app).post("/api/recipes")
+      .set('Authorization', 'Bearer ' + token)
       .send({
         title: "A brand new recipe!",
         ingredients: "Dolor sit amet!",
@@ -37,6 +62,7 @@ describe("PUT /recipes", () => {
         const newRecipeBody = res.body;
         id = newRecipeBody._id
         request(app).put("/api/recipes/" + id)
+          .set('Authorization', 'Bearer ' + token)
           .send({
             title: "Updated title!",
             ingredients: "Updated ingredients!",
@@ -60,5 +86,16 @@ describe("PUT /recipes", () => {
           })
       })
       .catch((err) => done(err))
+  })
+
+  it("FAIL: Updating a recipe requires a JWT", (done) => {
+    request(app).put("/api/recipes/" + id)
+    .send({
+      title: "Trying to update!",
+    })
+    .then((res) => {
+      expect(res.body.name).to.equal("UnauthorizedError")
+      done()
+    })
   })
 })

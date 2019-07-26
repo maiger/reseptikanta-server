@@ -7,9 +7,34 @@ const app = require("../../../app.js")
 const conn = require("../../../db/index.js")
 
 describe("POST /recipes", () => {
+
+  // Create user and get token
+  var token = null
   before((done) => {
     conn.connect()
-      .then(() => done())
+      .then(() => {
+        request(app).post("/api/user")
+          .send({
+            username: "RecipePostTest",
+            password: "password",
+            role: "user"
+          })
+          .then((res) => {
+            request(app).post("/api/user/login")
+              .send({
+                username: "RecipePostTest",
+                password: "password"
+              })
+              .then((res) => {
+                token = res.body.token
+                console.log("Setting user token: ")
+                console.log(token)
+                done()
+              })
+              .catch((err) => done(err))
+          })
+          .catch((err) => done(err))
+      })
       .catch((err) => done(err))
   })
 
@@ -19,9 +44,24 @@ describe("POST /recipes", () => {
       .catch((err) => done(err))
   })
 
+  it("FAIL: Creating a recipe requires a JWT", (done) => {
+    request(app).post("/api/recipes")
+      .send({
+        title: "A brand new recipe!",
+      })
+      .then((res) => {
+        expect(res.body.name).to.equal("UnauthorizedError")
+        done()
+      })
+      .catch((err) => {
+        done(err)
+      })
+  })
+
   it("OK: Creating a new recipe works", (done) => {
     // Create recipe
     request(app).post("/api/recipes")
+      .set('Authorization', 'Bearer ' + token)
       .send({
         title: "A brand new recipe!",
         ingredients: "Dolor sit amet!",
@@ -58,6 +98,7 @@ describe("POST /recipes", () => {
 
   it("FAIL: Recipe requires a title", (done) => {
     request(app).post("/api/recipes")
+      .set('Authorization', 'Bearer ' + token)
       .send({
         ingredients: "Dolor sit amet!",
         instructions: "Consectetur adipiscing elit!"
