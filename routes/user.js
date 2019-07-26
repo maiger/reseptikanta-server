@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const uc = require("../controllers/user")
+const authorize = require('../helpers/authorize')
+const uc = require("../controllers/user");
 
-router.post("/login", uc.authenticate); // Public route
-router.get("/", uc.getUsers)
-router.get("/:id", uc.getUserById)
+router.post("/login", uc.authenticate);
+router.get("/", authorize("user", "admin"), uc.getUsers);
+router.get("/:id", authorize("user", "admin"), uc.getUserById);
 router.post("/", uc.signup);
-router.put("/:id", uc.updateUser);
-router.delete("/:id", uc.deleteUser);
+router.put("/:id", authorize("user", "admin"), uc.updateUser);
+router.delete("/:id", authorize("user", "admin"), uc.deleteUser);
 
 module.exports = router;
