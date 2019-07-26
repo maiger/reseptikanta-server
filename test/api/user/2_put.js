@@ -29,9 +29,9 @@ describe("PUT /user", () => {
         role: "user"
       })
       .then((res) => {
-        // Update newly created recipe
-        const newRecipeBody = res.body;
-        id = newRecipeBody._id
+        // Update newly created user
+        const newUserBody = res.body;
+        id = newUserBody._id
         request(app).put("/api/user/" + id)
           .send({
             username: "UpdatedUsername",
