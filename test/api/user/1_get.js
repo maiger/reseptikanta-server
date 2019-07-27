@@ -7,9 +7,33 @@ const app = require("../../../app.js")
 const conn = require("../../../db/index.js")
 
 describe("GET /user", () => {
+  // Create user and get token
+  var token = null
   before((done) => {
     conn.connect()
-      .then(() => done())
+      .then(() => {
+        request(app).post("/api/user")
+          .send({
+            username: "UserGetTest",
+            password: "password",
+            role: "user"
+          })
+          .then((res) => {
+            request(app).post("/api/user/login")
+              .send({
+                username: "UserGetTest",
+                password: "password"
+              })
+              .then((res) => {
+                token = res.body.token
+                console.log("Setting user token: ")
+                console.log(token)
+                done()
+              })
+              .catch((err) => done(err))
+          })
+          .catch((err) => done(err))
+      })
       .catch((err) => done(err))
   })
 
@@ -19,19 +43,22 @@ describe("GET /user", () => {
       .catch((err) => done(err))
   })
 
-  it("OK: Getting users has one user", (done) => {
+  let userCount = null;
+  it("OK: Getting users has users", (done) => {
     // There is already one user created by test 0_post
     request(app).get("/api/user")
+      .set('Authorization', 'Bearer ' + token)
       .then((res) => {
         const body = res.body;
-        expect(body.length).to.equal(1)
+        userCount = body.length;
+        expect(userCount).to.be.above(0)
         done()
       })
       .catch((err) => done(err))
   })
 
   let id = "";
-  it("OK: Getting user has two users", (done) => {
+  it("OK: Getting user has one more user", (done) => {
     // Create user
     request(app).post("/api/user")
       .send({
@@ -44,11 +71,13 @@ describe("GET /user", () => {
         id = res.body._id
         // Get all user
         request(app).get("/api/user")
+          .set('Authorization', 'Bearer ' + token)
           .then((res) => {
             const body = res.body;
-            expect(body.length).to.equal(2)
+            expect(body.length).to.equal((userCount + 1))
             done()
           })
+          .catch((err) => done(err))
       })
       .catch((err) => done(err))
   })
@@ -56,6 +85,7 @@ describe("GET /user", () => {
   // Use user id from previous test
   it("OK: Getting user by ID", (done) => {
     request(app).get("/api/user/" + id)
+      .set('Authorization', 'Bearer ' + token)
       .then((res) => {
         const body = res.body;
         expect(body).to.contain.property("_id")
@@ -74,6 +104,7 @@ describe("GET /user", () => {
   // Correct type of ID, but no matching ID in DB
   it("FAIL: Getting user by incorrect ID, no user received", (done) => {
     request(app).get("/api/user/" + "5d2c6c31c13689361c9ca1c7")
+      .set('Authorization', 'Bearer ' + token)
       .then((res) => {
         const body = res.body;
         expect(body).to.equal(null);
@@ -85,6 +116,7 @@ describe("GET /user", () => {
   // Incorrect type of ID, DB does not understand it
   it("FAIL: Getting user by incorrect type of ID, no user received", (done) => {
     request(app).get("/api/user/" + "incorrectTypeOfID")
+      .set('Authorization', 'Bearer ' + token)
       .then((res) => {
         const body = res.body;
         expect(body.name).to.equal("CastError")
