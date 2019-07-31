@@ -29,10 +29,13 @@ async function authenticate({ username, password }) {
   const user = await User.findOne({ username });
   if (user && bcrypt.compareSync(password, user.hash)) {
     const { hash, ...userWithoutHash } = user.toObject();
-    const token = jwt.sign({ sub: user.id, role: user.role }, config.secret);
+    // Token expiration in seconds (12h)
+    let expiresIn = 43200;
+    const token = jwt.sign({ sub: user.id, role: user.role }, config.secret, { expiresIn: expiresIn });
     return {
       ...userWithoutHash,
-      token
+      token,
+      expiresIn
     };
   }
 };
